@@ -12,6 +12,12 @@ An example repository to demonstrate how to build on Kakarot.
 
 ## Setting up
 
+Run the following command to setup the git submodules.
+
+```
+make setup
+```
+
 To get started, you will need to run the local nodes. You can do this by running:
 
 ```sh

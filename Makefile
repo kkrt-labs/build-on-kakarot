@@ -4,10 +4,12 @@ SOL_CONTRACTS_PATH := solidity_contracts
 LOCAL_ENV_PATH := ./.env
 MAKE := make
 
+setup:
+	git submodule update --init --recursive
+
 start:
 	@echo "Starting Kakarot (L2 node) and Anvil (L1 node)"
-	$(MAKE) -C $(RPC_PATH) local-rpc-up & anvil & \
-	$(MAKE) copy-env
+	$(MAKE) -C $(RPC_PATH) local-rpc-up & anvil
 
 copy-env:
 	@echo "Copying .env file from Kakarot RPC container..."
