@@ -7,7 +7,7 @@ using CairoLib for uint256;
 
 contract CairoCounterCaller  {
     /// @dev The cairo contract to call
-    uint256 cairoCounter;
+    uint256 immutable cairoCounter;
 
     /// @dev The cairo function selector to call - `inc`
     uint256 constant FUNCTION_SELECTOR_INCREMENT = uint256(keccak256("increment")) % 2**250;
@@ -25,14 +25,14 @@ contract CairoCounterCaller  {
     }
 
     function getCairoNumber() public view returns (uint256 counterValue) {
-        bytes memory returnData = cairoCounter.staticcallContract(FUNCTION_SELECTOR_NUMBER);
+        bytes memory returnData = cairoCounter.staticcallCairo(FUNCTION_SELECTOR_NUMBER);
 
         // The return data is a 256-bit integer, so we can directly cast it to uint256
         return abi.decode(returnData, (uint256));
     }
 
     function getCairoNumberRaw() public view returns (bytes memory) {
-        bytes memory returnData = cairoCounter.staticcallContract(FUNCTION_SELECTOR_NUMBER);
+        bytes memory returnData = cairoCounter.staticcallCairo(FUNCTION_SELECTOR_NUMBER);
 
         // The return data is a 256-bit integer, so we can directly cast it to uint256
         return returnData;
@@ -40,7 +40,7 @@ contract CairoCounterCaller  {
 
     /// @notice Calls the Cairo contract to increment its internal number
     function incrementCairoNumber() external {
-        cairoCounter.callContract("increment");
+        cairoCounter.callCairo("increment");
     }
 
     /// @notice Calls the Cairo contract to set its internal number to an arbitrary value
@@ -54,6 +54,6 @@ contract CairoCounterCaller  {
         uint256[] memory data = new uint256[](2);
         data[0] = uint256(newNumberLow);
         data[1] = uint256(newNumberHigh);
-        cairoCounter.callContract(FUNCTION_SELECTOR_SET_NUMBER, data);
+        cairoCounter.callCairo(FUNCTION_SELECTOR_SET_NUMBER, data);
     }
 }

@@ -1,13 +1,22 @@
+#[starknet::interface]
+trait IKakarot<T> {
+    fn compute_starknet_address(self: @T, address: felt252) -> felt252;
+}
+
 #[starknet::contract]
-mod MyToken {
-    use openzeppelin::token::erc20::{ERC20Component, ERC20HooksEmptyImpl};
+mod DualVmToken {
+    use cairo_contracts::token::IKakarotDispatcherTrait;
+    use openzeppelin::token::erc20::ERC20Component;
     use starknet::ContractAddress;
+
+    const KAKAROT: felt252 = 0x4508afc067e9818fd1b4378f25593f721c83fcc89e3ab7f780e54b9f47c4a7a;
 
     component!(path: ERC20Component, storage: erc20, event: ERC20Event);
 
-    // ERC20 Mixin
     #[abi(embed_v0)]
-    impl ERC20MixinImpl = ERC20Component::ERC20MixinImpl<ContractState>;
+    impl ERC20Impl = ERC20Component::ERC20Impl<ContractState>;
+    #[abi(embed_v0)]
+    impl ERC20MetadataImpl = ERC20Component::ERC20MetadataImpl<ContractState>;
     impl ERC20InternalImpl = ERC20Component::InternalImpl<ContractState>;
 
     #[storage]
@@ -24,15 +33,17 @@ mod MyToken {
     }
 
     #[constructor]
-    fn constructor(
-        ref self: ContractState,
-        initial_supply: u256,
-        recipient: ContractAddress
-    ) {
+    fn constructor(ref self: ContractState, initial_supply: u256, recipient: ContractAddress) {
         let name = "MyToken";
         let symbol = "MTK";
 
         self.erc20.initializer(name, symbol);
-        self.erc20.mint(recipient, initial_supply);
+        self.erc20._mint(recipient, initial_supply);
+    }
+
+    #[external(v0)]
+    fn compute_starknet_address(self: @ContractState, address: felt252) -> felt252 {
+        super::IKakarotDispatcher { contract_address: KAKAROT.try_into().unwrap() }
+            .compute_starknet_address(address)
     }
 }
