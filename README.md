@@ -145,9 +145,25 @@ starkli call 0x015c370e6ad1799fc94b61982b72f2507bb88d0fc788153f7b052e55f7ea59bf 
 Now, let's build the EVM contract that will enable interactions with this token from the EVM side.
 
 ```sh
-forge create solidity_contracts/src/DualVMToken.sol:DualVMToken --constructor-args 0x48f6647d67bea35bb6978fb891674882069465e5f181886c58fc70887c45fa1 0x015c370e6ad1799fc94b61982b72f2507bb88d0fc788153f7b052e55f7ea59bf --private-key $PRIVATE_KEY
+make copy-env
+KAKAROT_ADDRESS=$(grep KAKAROT_ADDRESS .env | cut -d '=' -f2)
+forge create solidity_contracts/src/DualVMToken.sol:DualVMToken --constructor-args $KAKAROT_ADDRESS 0x015c370e6ad1799fc94b61982b72f2507bb88d0fc788153f7b052e55f7ea59bf --private-key $PRIVATE_KEY
 ```
 
+Don't forget to whitelist the contract to authorize it to call arbitrary contracts on the Starknet side.
+
+```sh
+make whitelist-contract CONTRACT_ADDRESS=0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512
 ```
+
+You can now interact with the `DualVMToken` contract using `cast`. By calling `name()`, the contract will call the Cairo token contract to get the token name. When transferring tokens, the contract will resolve the Starknet addresses of the EVM accounts, and perform the transfer on the Cairo side. This is entirely transparent, and the user does not need to know about what happens under the hood: it acts as a regular ERC20.
+
+```sh
+
+```
+
 cast call 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512 "name()"
+
+```
+
 ```

@@ -1,6 +1,5 @@
 #[starknet::contract]
 mod DualVmToken {
-    use cairo_contracts::token::IKakarotDispatcherTrait;
     use openzeppelin::token::erc20::ERC20Component;
     use starknet::ContractAddress;
 

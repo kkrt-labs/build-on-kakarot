@@ -37,6 +37,11 @@ contract DualVMToken {
         return CairoLib.byteArrayToString(returnData);
     }
 
+    function nameRaw() public view returns (bytes memory) {
+        bytes memory returnData = starknetToken.staticcallCairo("name");
+        return returnData;
+    }
+
     function symbol() public view returns (string memory) {
         bytes memory returnData = starknetToken.staticcallCairo("symbol");
         return CairoLib.byteArrayToString(returnData);
