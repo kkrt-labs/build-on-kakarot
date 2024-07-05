@@ -44,5 +44,11 @@ whitelist-contract: copy-env
 		echo "Error: .env file not found at $(LOCAL_ENV_PATH)"; \
 		exit 1; \
 	fi
+	@KAKAROT_ADDRESS=$$(grep KAKAROT_ADDRESS $(LOCAL_ENV_PATH) | cut -d '=' -f2); \
+	if [ -z "$$KAKAROT_ADDRESS" ]; then \
+		echo "Error: KAKAROT_ADDRESS not found in .env file"; \
+		exit 1; \
+	fi; \
+	echo "Using KAKAROT_ADDRESS: $$KAKAROT_ADDRESS"; \
 	echo "Whitelisting CONTRACT_ADDRESS: $(CONTRACT_ADDRESS)"; \
-	starkli invoke 0x4dbe544eaa4a34a9ef4e98524f99d654bf1373cda165e9c16a251066e59232 set_authorized_cairo_precompile_caller $(CONTRACT_ADDRESS) 1
+	starkli invoke $$KAKAROT_ADDRESS set_authorized_cairo_precompile_caller $(CONTRACT_ADDRESS) 1

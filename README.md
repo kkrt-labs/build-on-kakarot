@@ -129,13 +129,13 @@ Let's deploy the `DualVMToken` Cairo contract:
 
 ```sh
 starkli declare cairo_contracts/target/dev/cairo_contracts_DualVMToken.contract_class.json
-starkli deploy 0x007cadcf5c04b02dae809a2700b85ff87aca8a3117e67e9aec24c5513730b1c1 100 0 0xb3ff441a68610b30fd5e2abbf3a1548eb6ba6f3559f2862bf2dc757e5828ca
+starkli deploy 0x007cadcf5c04b02dae809a2700b85ff87aca8a3117e67e9aec24c5513730b1c1 100 0 0xb3ff441a68610b30fd5e2abbf3a1548eb6ba6f3559f2862bf2dc757e5828ca --salt 1
 ```
 
 This will deploy a token contract on the Cairo side. You can interact with it using the `starkli` tool.
 
 ```sh
-starkli call 0x04254a52ec0ce029a997f6b77cb9010b11c3c8a5a2112267fcc0e48db2b3383e "balance_of" 0xb3ff441a68610b30fd5e2abbf3a1548eb6ba6f3559f2862bf2dc757e5828ca
+starkli call 0x015c370e6ad1799fc94b61982b72f2507bb88d0fc788153f7b052e55f7ea59bf "balance_of" 0xb3ff441a68610b30fd5e2abbf3a1548eb6ba6f3559f2862bf2dc757e5828ca
 [
     "0x0000000000000000000000000000000000000000000000000000000000000064",
     "0x0000000000000000000000000000000000000000000000000000000000000000"
@@ -145,9 +145,9 @@ starkli call 0x04254a52ec0ce029a997f6b77cb9010b11c3c8a5a2112267fcc0e48db2b3383e 
 Now, let's build the EVM contract that will enable interactions with this token from the EVM side.
 
 ```sh
-forge create solidity_contracts/src/DualVMToken.sol:DualVMToken --constructor-args 0x25bf38c50e3c666bf4cf796b8a2b45d30b94c0fe8d732f7bddef4e0bb3bcb46 0x04254a52ec0ce029a997f6b77cb9010b11c3c8a5a2112267fcc0e48db2b3383e --private-key $PRIVATE_KEY
+forge create solidity_contracts/src/DualVMToken.sol:DualVMToken --constructor-args 0x48f6647d67bea35bb6978fb891674882069465e5f181886c58fc70887c45fa1 0x015c370e6ad1799fc94b61982b72f2507bb88d0fc788153f7b052e55f7ea59bf --private-key $PRIVATE_KEY
 ```
 
 ```
-cast call 0x0165878A594ca255338adfa4d48449f69242Eb8F "name()"
+cast call 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512 "name()"
 ```

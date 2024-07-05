@@ -5,20 +5,15 @@ import {CairoLib} from "kakarot-lib/CairoLib.sol";
 
 using CairoLib for uint256;
 
-contract CairoCounterCaller  {
-    /// @dev The cairo contract to call
+contract CairoCounterCaller {
+    /// @dev The address of the cairo contract to call
     uint256 immutable cairoCounter;
 
-    /// @dev The cairo function selector to call - `inc`
-    uint256 constant FUNCTION_SELECTOR_INCREMENT = uint256(keccak256("increment")) % 2**250;
-
     /// @dev The cairo function selector to call - `set_counter`
-    uint256 constant FUNCTION_SELECTOR_SET_NUMBER = uint256(keccak256("set_number")) % 2**250;
+    uint256 constant FUNCTION_SELECTOR_SET_NUMBER = uint256(keccak256("set_number")) % 2 ** 250;
 
     /// @dev The cairo function selector to call - `get`
-    uint256 constant FUNCTION_SELECTOR_NUMBER = uint256(keccak256("number")) % 2**250;
-
-
+    uint256 constant FUNCTION_SELECTOR_NUMBER = uint256(keccak256("number")) % 2 ** 250;
 
     constructor(uint256 cairoContractAddress) {
         cairoCounter = cairoContractAddress;
@@ -46,7 +41,7 @@ contract CairoCounterCaller  {
     /// @notice Calls the Cairo contract to set its internal number to an arbitrary value
     /// @dev The number value is split into two 128-bit values to match the Cairo contract's expected inputs (u256 is composed of two u128s)
     /// @param newNumber The new number value to set
-    function setCairoNumber(uint256 newNumber) external{
+    function setCairoNumber(uint256 newNumber) external {
         // The u256 input must be split into two u128 values to match the expected cairo input
         uint128 newNumberLow = uint128(newNumber);
         uint128 newNumberHigh = uint128(newNumber >> 128);
