@@ -7,4 +7,3 @@
 [submodule "solidity_contracts/lib/kakarot-lib"]
 	path = solidity_contracts/lib/kakarot-lib
 	url = https://github.com/kkrt-labs/kakarot-lib
-	branch = feat/byteArray-decoder
