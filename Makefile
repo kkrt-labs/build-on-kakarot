@@ -62,3 +62,7 @@ whitelist-contract: copy-env
 	echo "Using KAKAROT_ADDRESS: $$KAKAROT_ADDRESS"; \
 	echo "Whitelisting CONTRACT_ADDRESS: $(CONTRACT_ADDRESS)"; \
 	starkli invoke $$KAKAROT_ADDRESS set_authorized_cairo_precompile_caller $(CONTRACT_ADDRESS) 1
+
+test: copy-env build
+	@echo "Running tests..."
+	yarn hardhat test

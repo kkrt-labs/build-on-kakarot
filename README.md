@@ -7,6 +7,7 @@ An example repository to demonstrate how to build on Kakarot.
 ## Requirements
 
 - [Docker](https://docs.docker.com/get-docker/)
+- [Yarn](https://classic.yarnpkg.com/lang/en/docs/install)
 - [Foundry](https://book.getfoundry.sh/getting-started/installation)
 - [Scarb](https://docs.swmansion.com/scarb/download.html#install-via-asdf) and [Starkli](https://github.com/xJonathanLEI/starkli) if you want to deploy Cairo contracts. Make sure to install starkli version `0.2.9` with `starkliup -v  v0.2.9`
 

@@ -63,7 +63,7 @@ contract DualVMToken {
             abi.decode(kakarot.staticcallCairo("compute_starknet_address", kakarotCallData), (uint256));
         uint256[] memory balanceOfCallData = new uint256[](1);
         balanceOfCallData[0] = accountStarknetAddress;
-        bytes memory returnData = abi.decode(starknetToken.staticcallCairo("balance_of", balanceOfCallData), (uint256));
+        bytes memory returnData = starknetToken.staticcallCairo("balance_of", balanceOfCallData);
         (uint128 valueLow, uint128 valueHigh) = abi.decode(returnData, (uint128, uint128));
         return uint256(valueLow) + (uint256(valueHigh) << 128);
     }
@@ -86,7 +86,7 @@ contract DualVMToken {
         bytes memory returnData = starknetToken.staticcallCairo("allowance", allowanceCallData);
         (uint128 valueLow, uint128 valueHigh) = abi.decode(returnData, (uint128, uint128));
 
-        return uint256(valueLow) + (uint256(valueHow) << 128);
+        return uint256(valueLow) + (uint256(valueHigh) << 128);
     }
 
     /*//////////////////////////////////////////////////////////////

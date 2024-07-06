@@ -48,6 +48,20 @@ describe("DualVMToken", function () {
       })
     )[0];
 
+    // Send eth to addr1 and addr2, effectively deploying the underlying EOA accounts
+    await owner
+      .sendTransaction({
+        to: addr1.address,
+        value: parseEther("0.1"),
+      })
+      .then((tx) => tx.wait());
+    await owner
+      .sendTransaction({
+        to: addr2.address,
+        value: parseEther("0.1"),
+      })
+      .then((tx) => tx.wait());
+
     // Deploy the starknetToken
     dd = await account.declareAndDeploy({
       contract: starknetTokenSierra,
@@ -64,7 +78,6 @@ describe("DualVMToken", function () {
     // Deploy the DualVMToken contract
     const DualVMTokenFactory =
       await hre.ethers.getContractFactory("DualVMToken");
-
     dualVMToken = await DualVMTokenFactory.deploy(
       KAKAROT_ADDRESS,
       starknetToken.address,
@@ -79,7 +92,7 @@ describe("DualVMToken", function () {
       },
     ]);
 
-    // fund address 1
+    // fund address 1 with the DualVmToken
     await dualVMToken.connect(owner).transfer(addr1.address, 1000);
   });
 
@@ -125,34 +138,40 @@ describe("DualVMToken", function () {
 
   describe("Logic", function () {
     it("Should approve", async function () {
-      await dualVMToken.connect(addr1).approve(addr2.address, 100);
+      await dualVMToken
+        .connect(addr1)
+        .approve(addr2.address, 100)
+        .then((tx) => tx.wait());
       expect(
-        await dualVMToken.allowance(await addr1.address, await addr2.address),
+        await dualVMToken.allowance(await addr1.address, addr2.address),
       ).to.equal(100);
     });
 
     it("Should transfer", async function () {
-      const preBalance2 = await dualVMToken.balanceOf(await addr2.address);
+      const preBalance2 = await dualVMToken.balanceOf(addr2.address);
 
       await dualVMToken
         .connect(addr1)
         .transfer(addr2.address, 100n)
         .then((tx) => tx.wait());
-      expect(await dualVMToken.balanceOf(await addr2.address)).to.equal(
+      expect(await dualVMToken.balanceOf(addr2.address)).to.equal(
         preBalance2 + 100n,
       );
     });
 
     it("Should transferFrom", async function () {
-      await dualVMToken.connect(addr1).approve(addr2.address, 100);
-      const preBalance2 = await dualVMToken.balanceOf(await addr2.address);
+      await dualVMToken
+        .connect(addr1)
+        .approve(addr2.address, 100)
+        .then((tx) => tx.wait());
+      const preBalance2 = await dualVMToken.balanceOf(addr2.address);
 
       await dualVMToken
         .connect(addr2)
         .transferFrom(addr1.address, addr2.address, 100)
         .then((tx) => tx.wait());
 
-      expect(await dualVMToken.balanceOf(await addr2.address)).to.equal(
+      expect(await dualVMToken.balanceOf(addr2.address)).to.equal(
         preBalance2 + 100n,
       );
     });
