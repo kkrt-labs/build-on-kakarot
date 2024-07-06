@@ -1,23 +1,33 @@
 RPC_PATH := lib/kakarot-rpc
 CAIRO_CONTRACTS_PATH := cairo_contracts
 SOL_CONTRACTS_PATH := solidity_contracts
-LOCAL_ENV_PATH := ./.env
+LOCAL_ENV_PATH := .env
 MAKE := make
 
 setup:
-	git submodule update --init --recursive
+	git submodule update --init --recursive && yarn install
 
 start:
 	@echo "Starting Kakarot (L2 node) and Anvil (L1 node)"
 	$(MAKE) -C $(RPC_PATH) local-rpc-up & anvil
 
 copy-env:
-	@echo "Copying .env file from Kakarot RPC container..."
+	@echo "Updating .env file with keys from Kakarot RPC container..."
 	@container_id=$$(docker-compose -f $(RPC_PATH)/docker-compose.yaml ps -q kakarot-rpc); \
-	if docker cp $$container_id:/usr/src/app/.env $(LOCAL_ENV_PATH); then \
-		echo ".env file copied to $(LOCAL_ENV_PATH)"; \
+	if docker cp $$container_id:/usr/src/app/.env /tmp/kakarot_temp.env; then \
+		while IFS= read -r line; do \
+			key=$$(echo $$line | cut -d'=' -f1); \
+			value=$$(echo $$line | cut -d'=' -f2-); \
+			if grep -q "^$$key=" $(LOCAL_ENV_PATH); then \
+				sed -i.bak "s|^$$key=.*|$$key=$$value|" $(LOCAL_ENV_PATH) && rm $(LOCAL_ENV_PATH).bak; \
+			else \
+				echo $$line >> $(LOCAL_ENV_PATH); \
+			fi; \
+		done < /tmp/kakarot_temp.env; \
+		rm /tmp/kakarot_temp.env; \
+		echo ".env file updated at $(LOCAL_ENV_PATH)"; \
 	else \
-		echo "Failed to copy .env file."; \
+		echo "Failed to copy .env file from container."; \
 		exit 1; \
 	fi
 

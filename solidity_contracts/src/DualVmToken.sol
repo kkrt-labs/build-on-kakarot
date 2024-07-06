@@ -37,11 +37,6 @@ contract DualVMToken {
         return CairoLib.byteArrayToString(returnData);
     }
 
-    function nameRaw() public view returns (bytes memory) {
-        bytes memory returnData = starknetToken.staticcallCairo("name");
-        return returnData;
-    }
-
     function symbol() public view returns (string memory) {
         bytes memory returnData = starknetToken.staticcallCairo("symbol");
         return CairoLib.byteArrayToString(returnData);
@@ -68,7 +63,9 @@ contract DualVMToken {
             abi.decode(kakarot.staticcallCairo("compute_starknet_address", kakarotCallData), (uint256));
         uint256[] memory balanceOfCallData = new uint256[](1);
         balanceOfCallData[0] = accountStarknetAddress;
-        return abi.decode(starknetToken.staticcallCairo("balance_of", balanceOfCallData), (uint256));
+        bytes memory returnData = abi.decode(starknetToken.staticcallCairo("balance_of", balanceOfCallData), (uint256));
+        (uint128 valueLow, uint128 valueHigh) = abi.decode(returnData, (uint128, uint128));
+        return uint256(valueLow) + (uint256(valueHigh) << 128);
     }
 
     function allowance(address owner, address spender) public view returns (uint256) {
@@ -87,9 +84,9 @@ contract DualVMToken {
         allowanceCallData[1] = spenderStarknetAddress;
 
         bytes memory returnData = starknetToken.staticcallCairo("allowance", allowanceCallData);
-        (uint128 value1, uint128 value2) = abi.decode(returnData, (uint128, uint128));
+        (uint128 valueLow, uint128 valueHigh) = abi.decode(returnData, (uint128, uint128));
 
-        return uint256(value1) + (uint256(value2) << 128);
+        return uint256(valueLow) + (uint256(valueHow) << 128);
     }
 
     /*//////////////////////////////////////////////////////////////

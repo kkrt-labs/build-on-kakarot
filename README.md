@@ -159,11 +159,13 @@ make whitelist-contract CONTRACT_ADDRESS=0xe7f1725E7734CE288F8367e1Bb143E90bb3F0
 You can now interact with the `DualVMToken` contract using `cast`. By calling `name()`, the contract will call the Cairo token contract to get the token name. When transferring tokens, the contract will resolve the Starknet addresses of the EVM accounts, and perform the transfer on the Cairo side. This is entirely transparent, and the user does not need to know about what happens under the hood: it acts as a regular ERC20.
 
 ```sh
-
-```
-
 cast call 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512 "name()"
-
 ```
 
+### Run tests
+
+To run the hardhat test suite, you can run:
+
+```sh
+make test
 ```
