@@ -29,6 +29,16 @@ This will start an Anvil Node (that runs the L1 contracts for L1 <> L2 messaging
 
 Kakarot is deployed along with commonly used contracts, such as [Multicall3](https://github.com/mds1/multicall/blob/main/src/Multicall3.sol), [CreateX](https://github.com/pcaversaccio/createx?tab=readme-ov-file#permissioned-deploy-protection-and-cross-chain-redeploy-protection) and the [Arachnid Proxy](https://github.com/Arachnid/deterministic-deployment-proxy).
 
+## Deploying the L1 messaging contracts
+
+To deploy the L1 messaging contracts, you can run:
+
+```sh
+make deploy-l1
+```
+
+This will deploy the L1 messaging contracts on the Anvil node.
+
 ## Examples
 
 ### Deploying an EVM contract
@@ -38,7 +48,7 @@ You can deploy contracts on Kakarot using the regular EVM tooling, without any m
 ```sh
 export PRIVATE_KEY = <your_private_key>
 export ETH_RPC_URL=http://127.0.0.1:3030
-forge create solidity_contracts/src/Counter.sol:Counter --private-key $PRIVATE_KEY
+forge create solidity_contracts/src/examples/Counter.sol:Counter --private-key $PRIVATE_KEY
 ```
 
 This will deploy the Counter contract on Kakarot and return the address of the deployed contract.
@@ -100,7 +110,7 @@ Let's deploy the `CairoCounterCaller` contract, providing as constructor argumen
 > ⚠️ Don't forget to update the commands with your actual values
 
 ```sh
-forge create solidity_contracts/src/CairoCounterCaller.sol:CairoCounterCaller --constructor-args 0x01bdce28ce9c2a69e36a89a1c6cb2a927847a8991f9deda62086fb79f51955a0 --private-key $PRIVATE_KEY
+forge create solidity_contracts/src/examples/CairoCounterCaller.sol:CairoCounterCaller --constructor-args 0x01bdce28ce9c2a69e36a89a1c6cb2a927847a8991f9deda62086fb79f51955a0 --private-key $PRIVATE_KEY
 ```
 
 This will deploy a solidity contract, on Kakarot, that is able to interact with the Cairo Counter contract. However, before that, we need to _whitelist_ this contract to authorize it to call arbitrary contracts on the Starknet side.
@@ -148,7 +158,7 @@ Now, let's build the EVM contract that will enable interactions with this token 
 ```sh
 make copy-env
 KAKAROT_ADDRESS=$(grep KAKAROT_ADDRESS .env | cut -d '=' -f2)
-forge create solidity_contracts/src/DualVMToken.sol:DualVMToken --constructor-args $KAKAROT_ADDRESS 0x015c370e6ad1799fc94b61982b72f2507bb88d0fc788153f7b052e55f7ea59bf --private-key $PRIVATE_KEY
+forge create solidity_contracts/src/examples/DualVMToken.sol:DualVMToken --constructor-args $KAKAROT_ADDRESS 0x015c370e6ad1799fc94b61982b72f2507bb88d0fc788153f7b052e55f7ea59bf --private-key $PRIVATE_KEY
 ```
 
 Don't forget to whitelist the contract to authorize it to call arbitrary contracts on the Starknet side.

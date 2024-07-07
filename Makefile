@@ -5,11 +5,14 @@ LOCAL_ENV_PATH := .env
 MAKE := make
 
 setup:
-	git submodule update --init --recursive && yarn install
+	git submodule update --init --recursive && yarn install && cp .env.example .env
 
 start:
 	@echo "Starting Kakarot (L2 node) and Anvil (L1 node)"
 	$(MAKE) -C $(RPC_PATH) local-rpc-up & anvil
+
+deploy-l1: copy-env
+	yarn hardhat run scripts/deploy.ts --network l1Rpc
 
 copy-env:
 	@echo "Updating .env file with keys from Kakarot RPC container..."

@@ -8,5 +8,5 @@
     "skipLibCheck": true,
     "resolveJsonModule": true
   },
-  "include": ["./tests", "./typechain-types"]
+  "include": ["./tests", "./typechain-types", "scripts/config.ts"]
 }

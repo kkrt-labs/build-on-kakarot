@@ -9,7 +9,7 @@ import {
   readContractSierra,
   getTestProvider,
   getTestAccount,
-} from "./config";
+} from "../scripts/config";
 import dotenv from "dotenv";
 import {
   DeclareDeployUDCResponse,
@@ -19,6 +19,9 @@ import { DualVMToken } from "../typechain-types";
 dotenv.config();
 
 const KAKAROT_ADDRESS = process.env.KAKAROT_ADDRESS || "";
+if (KAKAROT_ADDRESS === "") {
+  throw new Error("KAKAROT_ADDRESS is not set in .env");
+}
 
 describe("DualVMToken", function () {
   let dualVMToken: DualVMToken;
@@ -72,15 +75,16 @@ describe("DualVMToken", function () {
     starknetToken = new StarknetContract(
       starknetTokenSierra.abi,
       dd.deploy.contract_address,
-      account,
+      account
     );
 
     // Deploy the DualVMToken contract
-    const DualVMTokenFactory =
-      await hre.ethers.getContractFactory("DualVMToken");
+    const DualVMTokenFactory = await hre.ethers.getContractFactory(
+      "DualVMToken"
+    );
     dualVMToken = await DualVMTokenFactory.deploy(
       KAKAROT_ADDRESS,
-      starknetToken.address,
+      starknetToken.address
     ).then((c) => c.waitForDeployment());
 
     // Whitelist the DualVMToken contract to call Cairo contracts
@@ -99,19 +103,19 @@ describe("DualVMToken", function () {
   describe("Metadata", function () {
     it("Should get the Cairo name", async function () {
       expect(await dualVMToken.name()).to.equal(
-        await starknetToken.call("name"),
+        await starknetToken.call("name")
       );
     });
 
     it("Should get the Cairo symbol", async function () {
       expect(await dualVMToken.symbol()).to.equal(
-        await starknetToken.call("symbol"),
+        await starknetToken.call("symbol")
       );
     });
 
     it("Should get the Cairo decimals", async function () {
       expect(await dualVMToken.decimals()).to.equal(
-        await starknetToken.call("decimals"),
+        await starknetToken.call("decimals")
       );
     });
   });
@@ -119,7 +123,7 @@ describe("DualVMToken", function () {
   describe("ERC20 storage", function () {
     it("Should get the total supply", async function () {
       expect(await dualVMToken.totalSupply()).to.equal(
-        await starknetToken.call("total_supply"),
+        await starknetToken.call("total_supply")
       );
     });
 
@@ -129,9 +133,9 @@ describe("DualVMToken", function () {
 
     it("Should get allowance", async function () {
       expect(
-        await dualVMToken.allowance(addr1.address, addr2.address),
+        await dualVMToken.allowance(addr1.address, addr2.address)
       ).to.equal(
-        await starknetToken.call("allowance", [addr1.address, addr2.address]),
+        await starknetToken.call("allowance", [addr1.address, addr2.address])
       );
     });
   });
@@ -143,7 +147,7 @@ describe("DualVMToken", function () {
         .approve(addr2.address, 100)
         .then((tx) => tx.wait());
       expect(
-        await dualVMToken.allowance(await addr1.address, addr2.address),
+        await dualVMToken.allowance(await addr1.address, addr2.address)
       ).to.equal(100);
     });
 
@@ -155,7 +159,7 @@ describe("DualVMToken", function () {
         .transfer(addr2.address, 100n)
         .then((tx) => tx.wait());
       expect(await dualVMToken.balanceOf(addr2.address)).to.equal(
-        preBalance2 + 100n,
+        preBalance2 + 100n
       );
     });
 
@@ -172,7 +176,7 @@ describe("DualVMToken", function () {
         .then((tx) => tx.wait());
 
       expect(await dualVMToken.balanceOf(addr2.address)).to.equal(
-        preBalance2 + 100n,
+        preBalance2 + 100n
       );
     });
   });
