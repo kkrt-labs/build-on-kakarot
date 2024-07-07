@@ -9,7 +9,7 @@ setup:
 
 start:
 	@echo "Starting Kakarot (L2 node) and Anvil (L1 node)"
-	$(MAKE) -C $(RPC_PATH) local-rpc-up & anvil
+	$(MAKE) -C $(RPC_PATH) local-rpc-up
 
 deploy-l1: copy-env
 	yarn hardhat run scripts/deploy.ts --network l1Rpc

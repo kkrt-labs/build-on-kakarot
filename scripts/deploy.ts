@@ -17,6 +17,8 @@ async function main() {
   );
   const starknetMessagingAddress = await starknetMessaging.getAddress();
 
+  console.log(`StarknetMessaging deployed to: ${starknetMessagingAddress}.`);
+
   const { L1KakarotMessaging } = await hre.ignition.deploy(
     L1KakarotMessagingModule,
     { parameters: { L1KakarotMessaging: { starknetMessagingAddress } } }
